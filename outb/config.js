@@ -45,10 +45,10 @@ function getConfig() {
     if (!fs.existsSync(configPath)) {
         const defaultConfig = {
             webhookUrl: "",
-            boomlingsUrl: "https://rickgdps.xyz/datastore",
-            botAccountID: 86,
+            boomlingsUrl: "https://boomlings.com",
+            botAccountID: 0,
             botAccountGJP2: "",
-            masterPassword: "helloworld"
+            masterPassword: ""
         };
         fs.writeFileSync(configPath, JSON.stringify(defaultConfig, null, 4));
     }
