@@ -55,7 +55,12 @@ class AuthManager {
 
             return await response.text();
         } catch (error) {
-            logging_1.default.error(`Boomlings request failed: ${error.message}`);
+            // Use info instead of error if warn is not available
+            if (logging_1.default.error) {
+                logging_1.default.error(`Boomlings request failed: ${error.message}`);
+            } else if (logging_1.default.info) {
+                logging_1.default.info(`Boomlings request failed: ${error.message}`);
+            }
             throw error;
         }
     }
@@ -78,7 +83,10 @@ class AuthManager {
 
     async updateMessagesCache() {
         if (this.isUpdatingCache) {
-            logging_1.default.warn("Cache update already in progress, skipping...");
+            // Use info instead of warn
+            if (logging_1.default.info) {
+                logging_1.default.info("Cache update already in progress, skipping...");
+            }
             return;
         }
 
@@ -88,13 +96,18 @@ class AuthManager {
             const messagesResponse = await this.sendAuthenticatedBoomlingsReq("/getGJMessages20.php", {});
             
             if (!messagesResponse || messagesResponse === "-1" || messagesResponse === "-2") {
-                logging_1.default.warn("No messages found or authentication failed");
+                // Use info instead of warn
+                if (logging_1.default.info) {
+                    logging_1.default.info("No messages found or authentication failed");
+                }
                 this.cachedMessages = {};
                 return;
             }
 
             const messagesStr = messagesResponse.split("|").filter(msg => msg.trim() !== "");
-            logging_1.default.info(`Refreshing cache with ${messagesStr.length} messages`);
+            if (logging_1.default.info) {
+                logging_1.default.info(`Refreshing cache with ${messagesStr.length} messages`);
+            }
 
             const newCachedMessages = {};
             
@@ -115,7 +128,11 @@ class AuthManager {
                         read: parseInt(msgObj["8"]) === 1
                     };
                 } catch (error) {
-                    logging_1.default.error(`Failed to parse message: ${error.message}`);
+                    if (logging_1.default.error) {
+                        logging_1.default.error(`Failed to parse message: ${error.message}`);
+                    } else if (logging_1.default.info) {
+                        logging_1.default.info(`Failed to parse message: ${error.message}`);
+                    }
                 }
             }
 
@@ -123,7 +140,12 @@ class AuthManager {
             await this.processPendingAuthentications();
             
         } catch (error) {
-            logging_1.default.error(`Failed to update messages cache: ${error.message}`);
+            // Use info instead of error if needed
+            if (logging_1.default.error) {
+                logging_1.default.error(`Failed to update messages cache: ${error.message}`);
+            } else if (logging_1.default.info) {
+                logging_1.default.info(`Failed to update messages cache: ${error.message}`);
+            }
         } finally {
             this.isUpdatingCache = false;
         }
@@ -145,10 +167,16 @@ class AuthManager {
                         (0, utils_1.sendPacket)(acc.socket, packet_1.Packet.ReceiveTokenPacket, { token });
                         outdatedMessages.push(message.messageID);
                         found = true;
-                        logging_1.default.info(`Successfully authenticated account ID: ${acc.account.accountID}`);
+                        if (logging_1.default.info) {
+                            logging_1.default.info(`Successfully authenticated account ID: ${acc.account.accountID}`);
+                        }
                         break;
                     } catch (error) {
-                        logging_1.default.error(`Failed to register user ${acc.account.accountID}: ${error.message}`);
+                        if (logging_1.default.error) {
+                            logging_1.default.error(`Failed to register user ${acc.account.accountID}: ${error.message}`);
+                        } else if (logging_1.default.info) {
+                            logging_1.default.info(`Failed to register user ${acc.account.accountID}: ${error.message}`);
+                        }
                         failedAuthentications.push(acc);
                     }
                 }
@@ -174,15 +202,23 @@ class AuthManager {
             await this.sendAuthenticatedBoomlingsReq("/deleteGJMessages20.php", {
                 messages: messageIDs.join(",")
             });
-            logging_1.default.info(`Deleted ${messageIDs.length} verification messages`);
+            if (logging_1.default.info) {
+                logging_1.default.info(`Deleted ${messageIDs.length} verification messages`);
+            }
         } catch (error) {
-            logging_1.default.error(`Failed to delete messages: ${error.message}`);
+            if (logging_1.default.error) {
+                logging_1.default.error(`Failed to delete messages: ${error.message}`);
+            } else if (logging_1.default.info) {
+                logging_1.default.info(`Failed to delete messages: ${error.message}`);
+            }
         }
     }
 
     async addAccountForAuth(account, socket) {
         this.accountsToAuth.push({ account, socket });
-        logging_1.default.info(`Added account ${account.accountID} for authentication`);
+        if (logging_1.default.info) {
+            logging_1.default.info(`Added account ${account.accountID} for authentication`);
+        }
         
         // Trigger immediate cache update if not already updating
         if (!this.isUpdatingCache) {
@@ -199,14 +235,24 @@ class AuthManager {
             });
 
             if (response === "1") {
-                logging_1.default.info(`Message sent successfully to account ID: ${toAccID}`);
+                if (logging_1.default.info) {
+                    logging_1.default.info(`Message sent successfully to account ID: ${toAccID}`);
+                }
                 return true;
             } else {
-                logging_1.default.error(`Failed to send message to ${toAccID}. Response: ${response}`);
+                if (logging_1.default.error) {
+                    logging_1.default.error(`Failed to send message to ${toAccID}. Response: ${response}`);
+                } else if (logging_1.default.info) {
+                    logging_1.default.info(`Failed to send message to ${toAccID}. Response: ${response}`);
+                }
                 return false;
             }
         } catch (error) {
-            logging_1.default.error(`Error sending message to ${toAccID}: ${error.message}`);
+            if (logging_1.default.error) {
+                logging_1.default.error(`Error sending message to ${toAccID}: ${error.message}`);
+            } else if (logging_1.default.info) {
+                logging_1.default.info(`Error sending message to ${toAccID}: ${error.message}`);
+            }
             return false;
         }
     }
@@ -221,9 +267,15 @@ class AuthManager {
         const success = await this.sendMessage(toAccID, subject, body);
         
         if (success) {
-            logging_1.default.info(`Verification message sent to ${username} (ID: ${toAccID})`);
+            if (logging_1.default.info) {
+                logging_1.default.info(`Verification message sent to ${username} (ID: ${toAccID})`);
+            }
         } else {
-            logging_1.default.error(`Failed to send verification message to ${username} (ID: ${toAccID})`);
+            if (logging_1.default.error) {
+                logging_1.default.error(`Failed to send verification message to ${username} (ID: ${toAccID})`);
+            } else if (logging_1.default.info) {
+                logging_1.default.info(`Failed to send verification message to ${username} (ID: ${toAccID})`);
+            }
         }
         
         return success;
