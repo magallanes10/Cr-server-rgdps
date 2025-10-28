@@ -7,7 +7,6 @@ RUN npm install
 RUN npm install -g typescript
 
 COPY . .
-RUN tsc && npx tsc-alias
 
 FROM node:18-alpine
 
