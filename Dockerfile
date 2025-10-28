@@ -11,4 +11,4 @@ COPY . .
 
 RUN chmod -R 755 /app
 
-CMD ["npm", "run", "dev"]
+CMD ["node", "outb/main.js"]
