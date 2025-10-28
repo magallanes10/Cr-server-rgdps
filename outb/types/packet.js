@@ -1,0 +1,26 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.Packet = void 0;
+var Packet;
+(function (Packet) {
+    Packet["LobbyCreatedPacket"] = "1001";
+    Packet["ReceiveAccountsPacket"] = "1002";
+    Packet["ReceiveLobbyInfoPacket"] = "1003";
+    Packet["LobbyUpdatedPacket"] = "1004";
+    Packet["SwapStartedPacket"] = "1005";
+    Packet["TimeToSwapPacket"] = "1006";
+    Packet["JoinedLobbyPacket"] = "1007";
+    Packet["ReceivePublicLobbiesPacket"] = "1008";
+    Packet["MessageSentPacket"] = "1009";
+    Packet["ReceiveSwappedLevelPacket"] = "3002";
+    Packet["SwapEndedPacket"] = "3003";
+    Packet["ErrorPacket"] = "4001";
+    Packet["BannedUserPacket"] = "4002";
+    Packet["AuthorizedUserPacket"] = "4003";
+    Packet["ReceiveAuthCodePacket"] = "4004";
+    Packet["ReceiveTokenPacket"] = "4005";
+    Packet["InvalidTokenPacket"] = "4006";
+    Packet["LoginNotReceivedPacket"] = "4007";
+    Packet["LoggedInPacket"] = "4008";
+    Packet["PongPacket"] = "4009";
+})(Packet || (exports.Packet = Packet = {}));
