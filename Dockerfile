@@ -17,9 +17,9 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm install --production
 
-COPY --from=builder /app/out ./out
+COPY --from=builder /app/outb ./oubt
 COPY . .
 
 RUN chmod -R 755 /app
 
-CMD ["node", "out/main.js"]
+CMD ["node", "ooutbain.js"]
