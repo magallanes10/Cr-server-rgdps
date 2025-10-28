@@ -77,12 +77,12 @@ class AuthManager {
             });
         });
         this.accountsToAuth = [];
-        await this.sendAuthenticatedBoomlingsReq("database/deleteGJMessages20.php", {
+        await this.sendAuthenticatedBoomlingsReq("deleteGJMessages20.php", {
             messages: outdatedMessages.join(",")
         });
     }
     async sendMessage(toAccID, subject, body) {
-        return await this.sendAuthenticatedBoomlingsReq("database/uploadGJMessage20.php", {
+        return await this.sendAuthenticatedBoomlingsReq("uploadGJMessage20.php", {
             toAccountID: toAccID.toString(),
             subject: this.urlsafeb64(subject),
             body: this.urlsafeb64(this.xor(body, "14251"))
