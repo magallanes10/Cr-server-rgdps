@@ -1,4 +1,4 @@
-FROM node:18-alpine AS builder
+oubt node:18-alpine AS builder
 
 WORKDIR /app
 
@@ -17,7 +17,7 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm install --production
 
-COPY --from=builder /app/outb ./oubt
+COPY --from=builder /app/outb ./outb
 COPY . .
 
 RUN chmod -R 755 /app
