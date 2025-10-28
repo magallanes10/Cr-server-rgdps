@@ -21,7 +21,7 @@
     "@types/ws": "^8.5.12",
     "tsc": "^2.0.4",
     "tsc-alias": "^1.8.10",
-    "typescript": "^5.5.4"
+    "typescript": "^5.9.3"
   },
   "scripts": {
     "dev": "tsc && tsc-alias && node out/main.js",
