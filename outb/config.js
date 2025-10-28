@@ -46,7 +46,7 @@ function getConfig() {
         const defaultConfig = {
             webhookUrl: "",
             boomlingsUrl: "https://rickgdps.xyz/datastore",
-            botAccountID: 0,
+            botAccountID: 86,
             botAccountGJP2: "",
             masterPassword: "helloworld"
         };
