@@ -19,7 +19,6 @@ class AuthManager {
     constructor(state) {
         this.state = state;
         this.accountsToAuth = [];
-        this.cachedMessages = {}; // Initialize cachedMessages
         setInterval(() => {
             if (this.accountsToAuth.length <= 0)
                 return;
@@ -49,87 +48,41 @@ class AuthManager {
         return this.cachedMessages;
     }
     async updateMessagesCache() {
-        try {
-            const response = await this.sendAuthenticatedBoomlingsReq("database/getGJMessages20.php", {});
-            
-            // Handle empty response or no messages
-            if (!response || response === "-1" || response === "-2") {
-                logging_1.default.info("No messages found or error response");
-                this.cachedMessages = {};
-                return;
-            }
-
-            const messagesStr = response.split("|");
-            logging_1.default.info("refreshing cache");
-            
-            this.cachedMessages = {};
-            const outdatedMessages = [];
-
-            for (const messageStr of messagesStr) {
-                if (!messageStr || messageStr.trim() === "") continue;
-                
-                try {
-                    const msgObj = parseKeyMap(messageStr);
-                    
-                    // Validate required fields
-                    if (!msgObj["1"] || !msgObj["2"] || !msgObj["3"]) {
-                        logging_1.default.warn("Skipping message with missing required fields");
-                        continue;
-                    }
-
-                    const msgID = parseInt(msgObj["1"]);
-                    const accountID = parseInt(msgObj["2"]);
-                    const playerID = parseInt(msgObj["3"]);
-
-                    if (isNaN(msgID) || isNaN(accountID) || isNaN(playerID)) {
-                        logging_1.default.warn("Skipping message with invalid numeric fields");
-                        continue;
-                    }
-
-                    this.cachedMessages[msgID] = {
-                        accountID: accountID,
-                        age: msgObj["7"] || "",
-                        messageID: msgID,
-                        playerID: playerID,
-                        title: msgObj["4"] ? Buffer.from(msgObj["4"], "base64").toString("ascii") : "",
-                        username: msgObj["6"] || ""
-                    };
-
-                    // Check if this message is for authentication
-                    for (const acc of this.accountsToAuth) {
-                        if (accountID === acc.account.accountID && this.cachedMessages[msgID].title === this.state.verifyCodes[acc.account.accountID]) {
-                            const token = await this.state.dbState.registerUser(acc.account);
-                            (0, utils_1.sendPacket)(acc.socket, packet_1.Packet.ReceiveTokenPacket, { token });
-                            outdatedMessages.push(msgID);
-                            logging_1.default.info(`Successfully authenticated account ID: ${accountID}`);
-                        }
-                    }
-                } catch (error) {
-                    logging_1.default.error(`Error processing message string: ${messageStr}`, error);
-                    continue;
+        const messagesStr = (await this.sendAuthenticatedBoomlingsReq("/getGJMessages20.php", {}))
+            .split("|");
+        logging_1.default.info("refreshing cache");
+        this.cachedMessages = {};
+        messagesStr.forEach(async (messageStr) => {
+            const msgObj = parseKeyMap(messageStr);
+            const msgID = parseInt(msgObj["1"]);
+            this.cachedMessages[msgID] = {
+                accountID: parseInt(msgObj["2"]),
+                age: msgObj["7"],
+                messageID: msgID,
+                playerID: parseInt(msgObj["3"]),
+                title: Buffer.from(msgObj["4"], "base64").toString("ascii"),
+                username: msgObj["6"]
+            };
+        });
+        let outdatedMessages = [];
+        Object.values(this.cachedMessages).forEach(async (message) => {
+            this.accountsToAuth.forEach(async (acc) => {
+                if (message.accountID !== acc.account.accountID)
+                    return;
+                if (message.title === this.state.verifyCodes[acc.account.accountID]) {
+                    const token = await this.state.dbState.registerUser(acc.account);
+                    (0, utils_1.sendPacket)(acc.socket, packet_1.Packet.ReceiveTokenPacket, { token });
+                    outdatedMessages.push(message.messageID);
                 }
-            }
-
-            // Remove processed accounts from auth queue
-            this.accountsToAuth = this.accountsToAuth.filter(acc => 
-                !outdatedMessages.some(msgID => 
-                    this.cachedMessages[msgID]?.accountID === acc.account.accountID
-                )
-            );
-
-            // Delete processed messages
-            if (outdatedMessages.length > 0) {
-                await this.sendAuthenticatedBoomlingsReq("deleteGJMessages20.php", {
-                    messages: outdatedMessages.join(",")
-                });
-                logging_1.default.info(`Deleted ${outdatedMessages.length} processed messages`);
-            }
-        } catch (error) {
-            logging_1.default.error("Error updating messages cache:", error);
-        }
+            });
+        });
+        this.accountsToAuth = [];
+        await this.sendAuthenticatedBoomlingsReq("/deleteGJMessages20.php", {
+            messages: outdatedMessages.join(",")
+        });
     }
     async sendMessage(toAccID, subject, body) {
-        return await this.sendAuthenticatedBoomlingsReq("uploadGJMessage20.php", {
+        return await this.sendAuthenticatedBoomlingsReq("/uploadGJMessage20.php", {
             toAccountID: toAccID.toString(),
             subject: this.urlsafeb64(subject),
             body: this.urlsafeb64(this.xor(body, "14251"))
