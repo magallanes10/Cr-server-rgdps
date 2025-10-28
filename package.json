@@ -1,0 +1,30 @@
+{
+  "name": "cr-server",
+  "version": "1.0.0-beta.11",
+  "main": "index.js",
+  "author": "TechStudent10",
+  "license": "MIT",
+  "private": true,
+  "dependencies": {
+    "app-root-path": "^3.1.0",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "obscenity": "^0.4.0",
+    "pako": "^2.1.0",
+    "sqlite": "^5.1.1",
+    "sqlite3": "^5.1.7",
+    "ws": "^8.18.0"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.21",
+    "@types/pako": "^2.0.3",
+    "@types/ws": "^8.5.12",
+    "tsc": "^2.0.4",
+    "tsc-alias": "^1.8.10",
+    "typescript": "^5.5.4"
+  },
+  "scripts": {
+    "dev": "tsc && tsc-alias && node out/main.js",
+    "build": "tsc && tsc-alias"
+  }
+}
