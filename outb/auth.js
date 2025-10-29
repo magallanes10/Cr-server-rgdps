@@ -26,7 +26,7 @@ class AuthManager {
         }, 4500); // 4500 = 4.5 seconds in milliseconds
     }
     async sendBoomlingsReq(url, data, method = "POST") {
-        return (await fetch(`${this.state.serverConfig.boomlingsUrl}`, {
+        return (await fetch(`${this.state.serverConfig.boomlingsUrl}/${url}`, {
             headers: {
                 "User-Agent": ""
             },
