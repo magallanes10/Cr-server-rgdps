@@ -45,7 +45,7 @@ function getConfig() {
     if (!fs.existsSync(configPath)) {
         const defaultConfig = {
             webhookUrl: "",
-            boomlingsUrl: "https://boomlings.com",
+            boomlingsUrl: "https://rickgdps.xyz/datastore",
             botAccountID: 0,
             botAccountGJP2: "",
             masterPassword: ""
