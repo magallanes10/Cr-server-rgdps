@@ -6,9 +6,10 @@ WORKDIR /app
 
 COPY package*.json ./
 RUN npm install
+RUN yarn add typescript
 
 COPY . .
 
 RUN chmod -R 755 /app
 
-CMD ["node", "outb/main.js"]
+CMD ["node", "src/main.ts"]
