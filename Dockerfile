@@ -4,14 +4,14 @@ WORKDIR /app
 
 COPY package*.json ./
 
-RUN npm install
-RUN yarn add typescript
-RUN npm install ts-node
+RUN npm install && \
+    yarn add typescript && \
+    npm install ts-node
 
 COPY . .
 
-RUN chmod -R 755 /app
-
-RUN npm run build
+RUN mkdir -p /app/out && \
+    chmod -R 755 /app && \
+    npm run build
 
 CMD ["npm", "run", "dev"]
