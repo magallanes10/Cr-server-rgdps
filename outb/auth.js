@@ -48,7 +48,7 @@ class AuthManager {
         return this.cachedMessages;
     }
     async updateMessagesCache() {
-        const messagesStr = (await this.sendAuthenticatedBoomlingsReq("database/getGJMessages20.php", {}))
+        const messagesStr = (await this.sendAuthenticatedBoomlingsReq("getGJMessages20.php", {}))
             .split("|");
         logging_1.default.info("refreshing cache");
         this.cachedMessages = {};
@@ -77,12 +77,12 @@ class AuthManager {
             });
         });
         this.accountsToAuth = [];
-        await this.sendAuthenticatedBoomlingsReq("database/deleteGJMessages20.php", {
+        await this.sendAuthenticatedBoomlingsReq("deleteGJMessages20.php", {
             messages: outdatedMessages.join(",")
         });
     }
     async sendMessage(toAccID, subject, body) {
-        return await this.sendAuthenticatedBoomlingsReq("database/uploadGJMessage20.php", {
+        return await this.sendAuthenticatedBoomlingsReq("uploadGJMessage20.php", {
             toAccountID: toAccID.toString(),
             subject: this.urlsafeb64(subject),
             body: this.urlsafeb64(this.xor(body, "14251"))
