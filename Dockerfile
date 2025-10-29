@@ -8,4 +8,4 @@ COPY package*.json ./
 RUN npm install
 COPY . .
 
-CMD ["npx", "ts-node", "src/main.ts"]
+CMD ["node", "--loader", "ts-node/esm", "src/main.ts"]
