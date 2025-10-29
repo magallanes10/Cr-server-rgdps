@@ -1,14 +1,14 @@
-FROM node:18-alpine
+FROM node:20-alpine
 
 WORKDIR /app
 
-RUN npm install -g ts-node
-
 COPY package*.json ./
-COPY tsconfig.json ./
 
+RUN npm install -g typescript
 RUN npm install
 
 COPY . .
 
-CMD ["ts-node", "src/main.ts"]
+RUN npm run build
+
+CMD ["npm", "run", "dev"]
