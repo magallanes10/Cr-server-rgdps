@@ -1,11 +1,14 @@
 FROM node:18-alpine
 
-USER root
-
 WORKDIR /app
 
 COPY package*.json ./
+COPY tsconfig.json ./
+
 RUN npm install
+
 COPY . .
 
-CMD ["node", "--loader", "ts-node/esm", "src/main.ts"]
+EXPOSE 8021
+
+CMD ["npx", "ts-node", "--transpile-only", "src/main.ts"]
