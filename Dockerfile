@@ -6,12 +6,10 @@ WORKDIR /app
 
 COPY package*.json ./
 RUN npm install && \
-    yarn add typescript && \
-    yarn install ts-node
-
+    yarn add typescript ts-node
 
 COPY . .
 
 RUN chmod -R 755 /app
 
-CMD ["yarn" "dev"]
+CMD ["yarn", "dev"]
