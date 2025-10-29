@@ -1,6 +1,3 @@
-import dotenv from "dotenv"
-dotenv.config()
-
 import WebSocket from "ws"
 import { createServer } from "http"
 import { default as express } from "express"
