@@ -11,4 +11,4 @@ COPY . .
 
 EXPOSE 8021
 
-CMD ["npx", "ts-node", "--transpile-only", "src/main.ts"]
+CMD ["node", "--loader", "ts-node/esm", "src/main.ts"]
