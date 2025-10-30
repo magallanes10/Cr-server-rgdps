@@ -25,7 +25,7 @@
     "typescript": "^5.9.3"
   },
   "scripts": {
-    "dev": "tsc && tsc-alias && node out/main.js",
+    "dev": "tsc && tsc-alias && node server/main.js",
     "build": "tsc && tsc-alias"
   }
 }
